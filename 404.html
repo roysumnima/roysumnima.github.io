@@ -26,7 +26,12 @@
     <style>
 
       :root, html {
-    background-color: #333;
+        background-color: #333;
+      }
+
+      html, body {
+        max-width: 100%;
+        overflow-x: hidden;
       }
     
     body {
@@ -42,11 +47,16 @@
     
     .missing-container {
       width: 100%;
+      max-width: 100vw;
       align-items: center;
+    }
+
+    .missing-container > div {
+      width: min(1500px, 100vw);
     }
     
     .scroll {
-      font-size: 10rem;
+      font-size: clamp(3rem, 18vw, 10rem);
       color: #333;
       
       display: flex;
@@ -126,7 +136,7 @@
   <body class="default" style="position: relative; overflow: hidden; top: 0; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center;">
     
     <div>
-      <h1 style="position: absolute; top: 0; left: 0; font-size: 100vh; color: rgba(255, 255, 255, 0.5);" >
+      <h1 style="position: absolute; top: 0; left: 0; font-size: clamp(6rem, 36vw, 100vh); color: rgba(255, 255, 255, 0.5); line-height: 0.85; pointer-events: none;" >
         404
       </h1>
     </div>
