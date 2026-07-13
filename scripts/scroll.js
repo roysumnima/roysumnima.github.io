@@ -52,11 +52,9 @@ $(document).ready(function() {
                     return firstScrollingTextLeft > secondScrollingTextLeft ? secondScrollingText : firstScrollingText;
                 }
             }
-        
-            $(window).on('wheel', function(e) {
-                var delta = e.originalEvent.deltaY;
-                
-                if (delta > 0) {
+
+            var applyScrollDelta = function(deltaY) {
+                if (deltaY > 0) {
                     // going down
                     transformAmount += transformSpeed * transformDirection;
                     container.find('.scrolling-text .scrolling-text-content').css('transform', 'skewX(10deg)');
@@ -71,20 +69,47 @@ $(document).ready(function() {
                 setTimeout(function() {
                     container.find('.scrolling-text .scrolling-text-content').css('transform', 'skewX(0)');
                 }, 500)
-        
+
                 // Boundaries
                 if (transformAmount < leftBound) {
                     var activeText = getActiveScrollingText('left');
                     activeText.css({'left': Math.round(leftBound - scrollingTextWidth - startLetterIndent) + 'px'});
                     leftBound = parseInt(activeText.css("left"), 10);
                     rightBound = leftBound + scrollingTextWidth + scrollAmountBoundary + startLetterIndent;
-        
+
                 } else if (transformAmount > rightBound) {
                     var activeText = getActiveScrollingText('right');
                     activeText.css({'left': Math.round(rightBound + scrollingTextWidth - scrollAmountBoundary + startLetterIndent) + 'px'});
                     rightBound += scrollingTextWidth + startLetterIndent;
                     leftBound = rightBound - scrollingTextWidth - scrollAmountBoundary - startLetterIndent;
                 }
+            };
+        
+            $(window).on('wheel', function(e) {
+                applyScrollDelta(e.originalEvent.deltaY);
+            });
+
+            var touchStartY = null;
+
+            $(window).on('touchstart', function(e) {
+                touchStartY = e.originalEvent.touches[0].clientY;
+            });
+
+            $(window).on('touchmove', function(e) {
+                if (touchStartY === null) {
+                    return;
+                }
+
+                var touchCurrentY = e.originalEvent.touches[0].clientY;
+                var deltaY = touchStartY - touchCurrentY;
+
+                if (Math.abs(deltaY) < 8) {
+                    return;
+                }
+
+                e.preventDefault();
+                applyScrollDelta(deltaY);
+                touchStartY = touchCurrentY;
             });
         })
     }
